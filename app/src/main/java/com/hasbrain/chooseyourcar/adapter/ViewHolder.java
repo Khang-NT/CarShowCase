@@ -20,8 +20,11 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.tvCarName)
     AppCompatTextView tvCarName;
 
+    View root;
+
     ViewHolder(View view) {
         super(view);
+        this.root = view;
         ButterKnife.bind(this, view);
     }
 

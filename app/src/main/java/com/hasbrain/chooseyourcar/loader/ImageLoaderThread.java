@@ -4,55 +4,77 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 /**
  * Created by Khang on 17/12/2015.
  */
 public class ImageLoaderThread extends AsyncTask<String, Void, Bitmap> {
-    private int position;
-    private int maxHeight;
-    private ImageLoaderCallback callback;
+    private static final String TAG = "asd";
+    private int reqHeight;
+    private WeakReference<ImageLoaderCallback> callback;
     private Context context;
-    private String key;
 
 
-    public ImageLoaderThread(Context context, int position, int maxHeight, ImageLoaderCallback callback) {
+    public ImageLoaderThread(Context context, int maxHeight, ImageLoaderCallback callback) {
         this.context = context;
-        this.position = position;
-        this.maxHeight = maxHeight;
-        this.callback = callback;
+        this.reqHeight = maxHeight;
+        this.callback = new WeakReference<>(callback);
     }
 
     @Override
     protected Bitmap doInBackground(String... params) {
-        key = params[0];
-
         int rawID = context.getResources().getIdentifier(params[0], "raw", context.getPackageName());
+        InputStream is = context.getResources().openRawResource(rawID);
 
         final BitmapFactory.Options ops = new BitmapFactory.Options();
         ops.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(context.getResources(), rawID, ops);
+        BitmapFactory.decodeStream(is, null, ops);
 
         ops.inSampleSize = calculateInSampleSize(ops);
-        Log.e("inSampleSize", "doInBackground: " + ops.inSampleSize);
         ops.inJustDecodeBounds = false;
 
-        return BitmapFactory.decodeResource(context.getResources(), rawID, ops);
+        return BitmapFactory.decodeStream(is, null, ops);
     }
 
-    private int calculateInSampleSize(BitmapFactory.Options options) {
-//        final int height = options.outHeight;
-//        Log.e("inSampleSize", "original height: " + options.outHeight );
+    private int calculateInSampleSize(BitmapFactory.Options ops) {
+        int height = ops.outHeight;
+        int inSampleSize = 1;
 
+        while ((height /= 2) > reqHeight)
+            inSampleSize *= 2;
 
-        return 8;
+        return inSampleSize;
     }
-
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-        if (bitmap != null && key != null && callback != null)
-            callback.onFinish(position, key, bitmap);
+        if (bitmap != null && callback != null && callback.get() != null) {
+            callback.get().onFinish(this, bitmap);
+        }
     }
+
+    private HashMap<String, Object> tags = new HashMap<>();
+
+    public void setTag(String key, Object tag) {
+        tags.put(key, tag);
+    }
+
+    public Object getTag(String key) {
+        return tags.get(key);
+    }
+
+    private Object nullKeyTag;
+
+    public void setTag(Object tag) {
+        nullKeyTag = tag;
+    }
+
+    public Object getTag() {
+        return nullKeyTag;
+    }
+
 }

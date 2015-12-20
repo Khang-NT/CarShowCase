@@ -38,11 +38,19 @@ public class CarListActivity extends AppCompatActivity {
         carDatastore.getCarList(new OnCarReceivedListener() {
             @Override
             public void onCarReceived(List<Car> cars, Exception ex) {
-                if (cars != null)
+                if (cars != null) {
                     recyclerView.setAdapter(new CarListAdapter(getApplicationContext(), cars));
+                    CarDetailActivity.initialize(cars);
+                }
                 else if (ex != null)
                     Toast.makeText(CarListActivity.this, "Error: " + ex.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CarDetailActivity.initialize(null);
     }
 }
