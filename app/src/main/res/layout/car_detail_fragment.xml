@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:paddingLeft="@dimen/page_padding"
+    android:paddingRight="@dimen/page_padding">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/ivCar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+
+        android:scaleType="fitXY" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+
+        android:background="@drawable/gradient">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tvCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="23sp"
+            android:gravity="end"
+            android:layout_marginTop="15dp"
+            android:paddingRight="15dp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_Brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="19sp"
+            android:gravity="end"
+            android:paddingRight="20dp" />
+    </LinearLayout>
+</FrameLayout>
